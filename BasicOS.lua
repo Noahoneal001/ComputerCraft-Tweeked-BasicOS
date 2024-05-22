@@ -35,4 +35,5 @@ while not isLogined do
   if event == "mouse_click" then
     if x >= screenX/5 + 8 and x <= screenX/5 + 8 + 12 and y == screenY/4 + 7 then
       term.redirect(usernameInput)
+    end
 end
