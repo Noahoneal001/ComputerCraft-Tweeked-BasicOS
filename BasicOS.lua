@@ -1,7 +1,9 @@
 --First make variables
 local screenX, screenY = term.getSize()
 local isLogined = false
-local logo = paintutils.loadImage("BasicLogo.nfp")
+local logo = paintutils.loadImage("/BasicOS_Files/BasicLogo.nfp")
+local ogScreen = term.current()
+local BasicOSHelper = require("BasicOS_Helper")
 
 --Second we prevent the user from force closeing the OS program before they past the login screen (We are saving the abilty to terminate to give back later)
 --Josh:"The Lord yeet'th, and The Lord yoink'th away - Abraham Lincon, 2"
@@ -19,18 +21,18 @@ term.clear()
 
 term.setTextColor(colors.black)
 
-term.setCursorPos(screenX/5,screenY/4)
-paintutils.drawImage(logo,term.getCursorPos())
+BasicOSHelper.drawImageAt(logo, screenX/5, screenY/4)
 
-paintutils.drawLine(screenX/5 + 8, screenY/4 + 7, screenX/5 + 18, screenY/4 + 7 , colors.white)
-term.setCursorPos(screenX/5 + 8, screenY/4 + 7)
-term.write("Username")
+local usernameInput = window.create(term.current(), screenX/5 + 8, screenY/4 + 7, 12, 1)
+local passwordInput = window.create(term.current(), screenX/5 + 8, screenY/4 + 9, 12, 1)
 
-paintutils.drawLine(screenX/5 + 8, screenY/4 + 9, screenX/5 + 18, screenY/4 + 9 , colors.white)
-term.setCursorPos(screenX/5 + 8, screenY/4 + 9)
-term.write("Password")
+BasicOSHelper.makeLoginInput(usernameInput, colors.white, colors.black, "Username")
+BasicOSHelper.makeLoginInput(passwordInput, colors.white, colors.black, "Password")
 
-while not isLogined do 
-  read()
-  error()
+while not isLogined do
+  local event, button, x, y = os.pullEvent("mouse_click")
+
+  if event == "mouse_click" then
+    if x >= screenX/5 + 8 and x <= screenX/5 + 8 + 12 and y == screenY/4 + 7 then
+      term.redirect(usernameInput)
 end

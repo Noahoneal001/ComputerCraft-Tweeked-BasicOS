@@ -1,1 +1,1 @@
-shell.run('BasicOS')
+shell.run("/BasicOS_Files/BasicOS")
