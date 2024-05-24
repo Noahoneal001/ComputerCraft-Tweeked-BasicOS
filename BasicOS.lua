@@ -1,5 +1,7 @@
 --First make variables
 local screenX, screenY = term.getSize()
+local middleScreenX = math.floor(screenX/5)
+local middleScreenY = math.floor(screenY/4)
 local isLogined = false
 local logo = paintutils.loadImage("/BasicOS_Files/BasicLogo.nfp")
 local ogScreen = term.current()
@@ -25,48 +27,38 @@ term.clear()
 
 term.setTextColor(colors.black)
 
-BasicOSHelper.drawImageAt(logo, math.floor(screenX/5), math.floor(screenY/4))
+BasicOSHelper.drawImageAt(logo, middleScreenX, middleScreenY)
 
-local usernameInputZone = window.create(term.current(), math.floor(screenX/5 + 8), math.floor(screenY/4 + 7), 12, 1)
-local passwordInputZone = window.create(term.current(), math.floor(screenX/5 + 8), math.floor(screenY/4 + 9), 12, 1)
+local usernameInputZone = window.create(term.current(), middleScreenX + 8, middleScreenY + 7, 12, 1)
+local passwordInputZone = window.create(term.current(), middleScreenX + 8, middleScreenY + 9, 12, 1)
 
 BasicOSHelper.makeLoginInput(usernameInputZone, colors.white, colors.black, "Username")
 BasicOSHelper.makeLoginInput(passwordInputZone, colors.white, colors.black, "Password")
 
 term.setBackgroundColor(colors.green)
-term.setCursorPos(math.floor(screenX/5 + 11), math.floor(screenY/4 + 11))
+term.setCursorPos(middleScreenX + 11, middleScreenY + 11)
 write("LOGIN")
 
 while not isLogined do
   local event, button, x, y = os.pullEvent("mouse_click")
 
   if event == "mouse_click" then
-    if x >= math.floor(screenX/5 + 8) and x <= math.floor(screenX/5 + 8 + 12) and y == math.floor(screenY/4 + 7) then
-      -- if BasicOS_Helper.isAreaClickedLine(x, y, math.floor(screenX/5 + 8))
-      term.redirect(usernameInputZone)
-      term.clear()
-      term.setCursorPos(1,1)
-      usernameInput = read()
-      write(usernameInput)
-      term.redirect(ogScreen)
+    if BasicOSHelper.isAreaClickedLine(x, y, middleScreenX + 8, 12, middleScreenY + 7) then
+      usernameInput = BasicOSHelper.inputBoxBrain(usernameInputZone, nil, ogScreen)
     end
-    if x >= math.floor(screenX/5 + 8) and x <= math.floor(screenX/5 + 8 + 12) and y == math.floor(screenY/4 + 9) then
-      term.redirect(passwordInputZone)
-      term.clear()
-      term.setCursorPos(1,1)
-      passwordInput = read("*")
-      write(string.rep("*", string.len(passwordInput)))
-      term.redirect(ogScreen)
+
+    if BasicOSHelper.isAreaClickedLine(x, y, middleScreenX + 8, 12, middleScreenY + 9) then
+      passwordInput = BasicOSHelper.inputBoxBrain(passwordInputZone, "*", ogScreen, true)
     end
-    if x >= math.floor(screenX/5 + 11) and x <= math.floor(screenX/5 + 16) and y == math.floor(screenY/4 + 11) then
+
+    if BasicOSHelper.isAreaClickedLine(x, y, middleScreenX + 11, 5, middleScreenY + 11) then
       if usernameInput == username and passwordInput == password then
         os.pullEvent = yoink
-        term.setBackgroundColor(colors.black)
-        term.clear()
+        BasicOSHelper.newBackground(colors.black)
         term.setCursorPos(1,1)
         error()
       else
-        term.setCursorPos(math.floor(screenX/5 + 9), math.floor(screenY/4 + 13))
+        term.setCursorPos(middleScreenX + 9, middleScreenY + 13)
         term.setBackgroundColor(colors.lightGray)
         term.setTextColor(colors.red)
         write("INCORRECT")
