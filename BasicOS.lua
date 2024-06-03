@@ -3,17 +3,18 @@ local screenX, screenY = term.getSize()
 local middleScreenX = math.floor(screenX/5)
 local middleScreenY = math.floor(screenY/4)
 local isLogined = false
-local logo = paintutils.loadImage("/BasicOS_Files/BasicLogo.nfp")
+local logo = paintutils.loadImage("/BasicOS_Files/systemImgs/BasicLogo.nfp")
 local ogScreen = term.current()
 local usernameInput = "Username"
 local passwordInput = "Password"
-local username = "Nicehoan123"
-local password = "FIREBALL!"
+local username = "Username"
+local password = "Password"
 local BasicOSHelper = require("BasicOS_Helper")
 
 --Second we prevent the user from force closeing the OS program before they past the login screen (We are saving the abilty to terminate to give back later)
 --Josh:"The Lord yeet'th, and The Lord yoink'th away - Abraham Lincon, 2"
 local yoink = os.pullEvent
+
 
 os.pullEvent = os.pullEventRaw
 
@@ -22,8 +23,7 @@ term.clear()
 term.setCursorPos(1,1)
 
 -- Now we are createing the start screen
-term.setBackgroundColor(colors.lightGray)
-term.clear()
+BasicOSHelper.newBackground(colors.lightGray)
 
 term.setTextColor(colors.black)
 
@@ -53,10 +53,7 @@ while not isLogined do
 
     if BasicOSHelper.isAreaClickedLine(x, y, middleScreenX + 11, 5, middleScreenY + 11) then
       if usernameInput == username and passwordInput == password then
-        os.pullEvent = yoink
-        BasicOSHelper.newBackground(colors.black)
-        term.setCursorPos(1,1)
-        error()
+        isLogined = true
       else
         term.setCursorPos(middleScreenX + 9, middleScreenY + 13)
         term.setBackgroundColor(colors.lightGray)
@@ -67,3 +64,40 @@ while not isLogined do
     end
   end
 end
+
+BasicOSHelper.newBackground(colors.black)
+os.pullEvent = yoink
+
+paintutils.drawLine(1, screenY, screenX, screenY, colors.yellow)
+term.setCursorPos(1, screenY)
+term.setBackgroundColor(colors.green)
+term.setTextColor(colors.white)
+write("MENU")
+
+
+local appIconImg = paintutils.loadImage("/BasicOS_Files/systemImgs/shellIcon.nfp")
+local arrowLeft = paintutils.loadImage("/BasicOS_Files/systemImgs/leftArrow.nfp")
+local arrowRight = paintutils.loadImage("/BasicOS_Files/systemImgs/rightArrow.nfp")
+local appIcon = window.create(ogScreen, middleScreenX + 10, middleScreenY + 1, 13, 9)
+
+term.redirect(appIcon)
+BasicOSHelper.drawImageAt(appIconImg, 1, 1)
+term.redirect(ogScreen)
+
+BasicOSHelper.drawImageAt(arrowLeft, middleScreenX + 3, middleScreenY + 2)
+BasicOSHelper.drawImageAt(arrowRight, middleScreenX + 25, middleScreenY + 2)
+
+term.redirect(ogScreen)
+paintutils.drawLine(middleScreenX + 10, middleScreenY + 11, middleScreenX + 21, middleScreenY + 11, colors.white)
+term.setCursorPos(middleScreenX + 10, middleScreenY + 11)
+term.setTextColor(colors.black)
+term.write("Shell")
+
+while true do
+  local event, mouseButton, x, y = os.pullEvent("mouse_click")
+  if ((x >= middleScreenX + 10) and (x <= middleScreenX + 23)) then
+    shell.run("fg", "shell")
+  end
+end
+
+local stop = os.pullEvent("modem_message")
